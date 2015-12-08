@@ -1,4 +1,4 @@
-class UneploymentRate {
+class ODStatistics {
     constructor(opts) {
         let cls_reg = new RegExp('^(.*?)__cls$'),
             id_reg = new RegExp('^(.*?)__id$'),

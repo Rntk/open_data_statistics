@@ -1,5 +1,5 @@
 src/ods_.js
-src/ods_min.js
+src/ods_.min.js
 dist
 Chart.min.js
 polyfill.min.js
