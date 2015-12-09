@@ -11,7 +11,10 @@
     </div>
     <p>Источник: <a href="http://data.egov.kz/" id="source_link">Портал открытых данных Республики Казахстан</a></p>
     <div id="chart_block">
-        <canvas id="chart"></canvas>
+        <ul id="years_block">
+        </ul>
+        <canvas id="chart_pie"></canvas>
+        <canvas id="chart_line"></canvas>
         <div class="legend_tools">
             <ul>
                 <li id="check_all">
@@ -55,13 +58,17 @@
     var ods_app = new ODStatistics({
         proxy: 'http://127.0.0.1:9876/r.php',
         chart_block__id: 'chart_block',
-        chart__id: 'chart',
+        years_block__id: 'years_block',
+        chart_line__id: 'chart_line',
+        chart_pie__id: 'chart_pie',
         loading__id: 'loader',
         loading_visible_class: 'loader_visible',
         tooltip__tpl: 'tooltip_template',
         legend_block__id: 'legend_block',
         legend__tpl: 'legend_template',
         legend_checkbox_class: 'legend_checkbox',
+        year_class: 'year_item',
+        active_element_class: 'active',
         stat_select__id: 'stat_select',
         chart_select__id: 'chart_select',
         api_data: api_data,

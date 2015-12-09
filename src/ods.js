@@ -32,6 +32,7 @@ class ODStatistics {
         this._data = [];
         this.disabled = new Set();
         this.anchor = 'stat';
+        this.years = [];
     }
     
     start() {
@@ -157,6 +158,44 @@ class ODStatistics {
         this.changeChart(indexes);
     }
     
+    changePieChart(index) {
+        index = +index;
+        if (this.current_year === index) {
+            this.$chart_pie.hide();
+        } else {
+            this.current_year = index;
+            this.buildPieData();
+            this.renderPieChart();
+        }
+    }
+    
+    buildPieData() {
+        
+    }
+    
+    renderPieChart() {
+        if (this.chart_pie && this.chart_pie.destroy) {
+            this.chart_pie.destroy();
+        }
+        Chart.defaults.global.scaleBeginAtZero = true;
+        Chart.defaults.global.tooltipTemplate = this.tooltip__tpl;
+        Chart.defaults.global.multiTooltipTemplate = this.tooltip__tpl;
+        this.chart_pie = new Chart(this.$chart_pie.getContext('2d')).Pie(this.chart_pie_data);
+    }
+    
+    processYearClick(el) {
+        if (el.classList.contains(this.active_element_class)) {
+            el.classList.remove(this.active_element_class);
+        } else {
+            let active = this.$years_block.querySelector('.' + this.active_element_class);
+            if (active) {
+                active.classList.remove(this.active_element_class)
+            }
+            el.classList.add(this.active_element_class);
+        }
+        this.changePieChart(el.getAttribute('data-index'));
+    }
+    
     bindEvents() {
         var app = this;
         
@@ -177,6 +216,12 @@ class ODStatistics {
         this.$uncheck_all.addEventListener('click', function() {
             let arr = Array.from(app._data.keys());
             app.processLegendState(arr);
+        });
+        
+        this.$years_block.addEventListener('click', function (e) {
+            if (e.target.classList.contains(app.year_class)) {
+                app.processYearClick(e.target);
+            }
         });
     }
     
@@ -226,19 +271,19 @@ class ODStatistics {
     buildData() {
         let reg = new RegExp('^y([0-9]{4,4})$'),
             years_set = new Set(),
-            years_arr = [],
             datasets = [],
             data = this._data,
             year = '',
             last = 0,
             year_key;
             
+        this.years = [];
         if (this._data[0].measureRu) {
             this.units = this._data[0].measureRu;
         } else {
             this.units = '';
         }
-        this.chart_data = {};
+        this.chart_line_data = {};
         for (let i = 0; i < data.length; i++) {
             if (!this.disabled.has(i)) {
                 for (let name in data[i]) {
@@ -249,8 +294,8 @@ class ODStatistics {
                 }
             }
         }
-        years_arr = Array.from(years_set);
-        years_arr.sort((a, b) => a - b);
+        this.years = Array.from(years_set);
+        this.years.sort((a, b) => a - b);
         for (let i = 0; i < data.length; i++) {
             if (!this.disabled.has(i)) {
                 datasets.push({
@@ -267,8 +312,8 @@ class ODStatistics {
                 datasets[last].strokeColor = data[i].color;
                 datasets[last].pointColor = data[i].color;
                 datasets[last].units = data[i].measureRu;
-                for (let j = 0; j < years_arr.length; j++) {
-                    year_key = 'y' + years_arr[j];
+                for (let j = 0; j < this.years.length; j++) {
+                    year_key = 'y' + this.years[j];
                     if (data[i][year_key]) {
                         datasets[last].data.push(+data[i][year_key]);
                     } else {
@@ -277,23 +322,39 @@ class ODStatistics {
                 }
             }
         }
-        this.chart_data.labels = years_arr;
-        this.chart_data.datasets = datasets;
+        this.chart_line_data.labels = this.years;
+        this.chart_line_data.datasets = datasets;
+    }
+    
+    renderYears() {
+        let app = this,
+            li = document.createElement('li');
+            
+        li.className = this.year_class;
+        this.$years_block.innerHTML = '';
+        this.years.forEach(function(year, i) {
+            let new_li = li.cloneNode();
+            
+            new_li.setAttribute('data-index', i);
+            new_li.textContent = year;
+            app.$years_block.appendChild(new_li);
+        });
     }
     
     renderData() {
         let app = this;
         
         this.buildData();
-        if (this.chart && this.chart.destroy) {
-            this.chart.destroy();
+        this.renderYears();
+        if (this.chart_line && this.chart_line.destroy) {
+            this.chart_line.destroy();
         }
-        if (this.chart_data.datasets.length) {
+        if (this.chart_line_data.datasets.length) {
             Chart.defaults.global.scaleBeginAtZero = true;
             Chart.defaults.global.tooltipTemplate = this.tooltip__tpl;
             Chart.defaults.global.multiTooltipTemplate = this.tooltip__tpl;
-            this.chart = new Chart(this.$chart.getContext('2d')).Line(
-                this.chart_data,
+            this.chart_line = new Chart(this.$chart_line.getContext('2d')).Line(
+                this.chart_line_data,
                 {
                     legendTemplate: this.legend__tpl
                 }
@@ -304,7 +365,7 @@ class ODStatistics {
     }
     
     renderLegend() {
-        this.$legend_block.innerHTML = this.chart.generateLegend();
+        this.$legend_block.innerHTML = this.chart_line.generateLegend();
     }
     
     showError(data) {
