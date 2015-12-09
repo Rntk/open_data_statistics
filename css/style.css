@@ -30,6 +30,16 @@ html, body {
     height: 75%;
 }
 
+.legend_tools {
+    text-align: center;
+}
+
+.legend_tools li {
+    display: inline-block;
+    margin: 0.5em;
+    cursor: pointer;
+}
+
 .legend_item {
     display: inline-block;
     list-style: none;

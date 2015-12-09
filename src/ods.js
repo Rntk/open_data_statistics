@@ -149,6 +149,15 @@ class ODStatistics {
         this.$stat_select.addEventListener('change', function() {
             app.selectChartStat(this.options[this.selectedIndex].value);
         });
+        
+        this.$check_all.addEventListener('click', function() {
+            app.changeChart([]);
+        });
+        
+        this.$check_all.addEventListener('click', function() {
+            let arr = Array.of(app._data.keys());
+            app.changeChart(arr);
+        });
     }
     
     random(min, max) {
@@ -165,17 +174,25 @@ class ODStatistics {
     
     changeChart(indexes) {
         Chart.defaults.global.animation = false;
-        if (indexes) {
-            for (let i = 0; i < indexes.length; i++) {
-                indexes[i] = +indexes[i];
-                if (this.disabled.has(indexes[i])) {
-                    this.disabled.delete(indexes[i]);
-                } else {
-                    this.disabled.add(indexes[i]);
+        if (indexes && indexes.length) {
+            if (indexes.length !== this._data.length) {
+                for (let i = 0; i < indexes.length; i++) {
+                    indexes[i] = +indexes[i];
+                    if (this.disabled.has(indexes[i])) {
+                        this.disabled.delete(indexes[i]);
+                    } else {
+                        this.disabled.add(indexes[i]);
+                    }
+                }
+            } else {
+                for (let i = 0; i < indexes.length; i++) {
+                    this.disabled.add(+indexes[i]);
                 }
             }
-            this.renderData();
+        } else {
+            this.disabled.clear();
         }
+        this.renderData();
     }
     
     processData() {

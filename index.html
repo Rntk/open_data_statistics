@@ -12,6 +12,16 @@
     </div>
     <div id="chart_block">
         <canvas id="chart"></canvas>
+        <div class="legend_tools">
+            <ul>
+                <li id="check_all">
+                    Выбрать все
+                </li>
+                <li id="uncheck_all">
+                    Отменить все
+                </li>
+            </ul>
+        </div>
         <div id="legend_block">
         </div>
     </div>
@@ -55,7 +65,9 @@
         stat_select__id: 'stat_select',
         chart_select__id: 'chart_select',
         api_data: api_data,
-        source_link__id: 'source_link'
+        source_link__id: 'source_link',
+        check_all__id: 'check_all',
+        uncheck_all__id: 'uncheck_all'
     });
     ods_app.start();
 </script>
