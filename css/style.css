@@ -46,6 +46,11 @@ html, body {
     margin: 1em;
 }
 
+#check_all, #uncheck_all {
+    color: blue;
+    border-bottom: 1px dashed blue;
+}
+
 #loader {
     position: fixed;
     top: 0;

@@ -128,6 +128,7 @@ class ODStatistics {
                 xhr.send();
         });
         promise.then(function(data) {
+            data.data.sort((a, b) => a.nameRu.charAt(0) >= b.nameRu.charAt(0));
             app._data = data.data;
             app.hideLoading();
         }).catch(function(data) {
@@ -188,6 +189,7 @@ class ODStatistics {
             this.current_stat_index = index;
             this.updateChartData(this.api_data[index].url);
             window.location.hash = this.anchor + index;
+            Chart.defaults.global.animation = true;
         }
     }
     
@@ -316,6 +318,6 @@ class ODStatistics {
     }
     
     hideLoading() {
-        this.$loading.remove(this.loading_visible_class);
+        this.$loading.classList.remove(this.loading_visible_class);
     }
 }
