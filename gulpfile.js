@@ -54,6 +54,7 @@ gulp.task('htmlmin', function() {
     .pipe(replace('css/style.css', 'style.min.css'))
     .pipe(replace('<script type="text/javascript" src="libs/Chart.min.js"></script>', ''))
     .pipe(replace('<script type="text/javascript" src="libs/polyfill.min.js"></script>', ''))
+    .pipe(replace('http://127.0.0.1:9876/r.php', 'http://rntk.kz/od/r.php'))
     .pipe(replace('src/ods_.js', 'bundle.js'))
     .pipe(htmlmin({collapseWhitespace: true}))
     .pipe(gulp.dest('dist'));

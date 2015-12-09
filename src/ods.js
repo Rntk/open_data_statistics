@@ -270,7 +270,7 @@ class ODStatistics {
     showError(data) {
         console.log(data);
         alert('Какие-то проблемы. Попробуйте позже.');
-        throw new Error('Can`t get data');
+        //throw new Error('Can`t get data');
     }
     
     showLoading() {
