@@ -137,6 +137,25 @@ class ODStatistics {
         return (promise);
     }
     
+    processLegendState(indexes) {
+        let app = this;
+        
+        if (indexes && indexes.length) {
+            indexes.forEach(function(index) {
+                let el = app.$legend_block.querySelector('#ch' + index);
+                if (el) {
+                    el.checked = false;
+                }
+            });
+        } else {
+            let checkboxes = this.$legend_block.querySelectorAll('.' + app.legend_checkbox_class);
+            Array.prototype.forEach.call(checkboxes, function(el) {
+                el.checked = true;
+            });
+        }
+        this.changeChart(indexes);
+    }
+    
     bindEvents() {
         var app = this;
         
@@ -151,12 +170,12 @@ class ODStatistics {
         });
         
         this.$check_all.addEventListener('click', function() {
-            app.changeChart([]);
+            app.processLegendState([]);
         });
         
-        this.$check_all.addEventListener('click', function() {
-            let arr = Array.of(app._data.keys());
-            app.changeChart(arr);
+        this.$uncheck_all.addEventListener('click', function() {
+            let arr = Array.from(app._data.keys());
+            app.processLegendState(arr);
         });
     }
     
@@ -267,17 +286,19 @@ class ODStatistics {
         if (this.chart && this.chart.destroy) {
             this.chart.destroy();
         }
-        Chart.defaults.global.scaleBeginAtZero = true;
-        Chart.defaults.global.tooltipTemplate = this.tooltip__tpl;
-        Chart.defaults.global.multiTooltipTemplate = this.tooltip__tpl;
-        this.chart = new Chart(this.$chart.getContext('2d')).Line(
-            this.chart_data,
-            {
-                legendTemplate: this.legend__tpl
-            }
-        );
-        this.$source_link.setAttribute('href', this.api_data[this.current_stat_index].page);
-        this.$source_link.textContent = this.api_data[this.current_stat_index].title;
+        if (this.chart_data.datasets.length) {
+            Chart.defaults.global.scaleBeginAtZero = true;
+            Chart.defaults.global.tooltipTemplate = this.tooltip__tpl;
+            Chart.defaults.global.multiTooltipTemplate = this.tooltip__tpl;
+            this.chart = new Chart(this.$chart.getContext('2d')).Line(
+                this.chart_data,
+                {
+                    legendTemplate: this.legend__tpl
+                }
+            );
+            this.$source_link.setAttribute('href', this.api_data[this.current_stat_index].page);
+            this.$source_link.textContent = this.api_data[this.current_stat_index].title;
+        }
     }
     
     renderLegend() {
