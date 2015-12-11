@@ -36,8 +36,11 @@
 <script type="text/javascript" src="libs/Chart.min.js"></script>
 <script type="text/javascript" src="libs/polyfill.min.js"></script>
 <script type="text/javascript" src="src/ods_.js"></script>
-<script id="tooltip_template" type="x-tmpl-chart">
+<script id="tooltip_line_template" type="x-tmpl-chart">
     <%= value %> : <%= datasetLabel %>
+</script>
+<script id="tooltip_pie_template" type="x-tmpl-chart">
+    <%= value %> : <%= label %>
 </script>
 <script id="legend_template" type="x-tmpl-chart">
 <ul>
@@ -61,9 +64,11 @@
         years_block__id: 'years_block',
         chart_line__id: 'chart_line',
         chart_pie__id: 'chart_pie',
+        visible_class: 'visible',
         loading__id: 'loader',
         loading_visible_class: 'loader_visible',
-        tooltip__tpl: 'tooltip_template',
+        tooltip_line__tpl: 'tooltip_line_template',
+        tooltip_pie__tpl: 'tooltip_pie_template',
         legend_block__id: 'legend_block',
         legend__tpl: 'legend_template',
         legend_checkbox_class: 'legend_checkbox',

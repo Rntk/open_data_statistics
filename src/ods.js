@@ -158,10 +158,18 @@ class ODStatistics {
         this.changeChart(indexes);
     }
     
+    hidePieChart() {
+        this.$chart_pie.classList.remove(this.visible_class);
+    }
+    
+    showPieChart() {
+        this.$chart_pie.classList.add(this.visible_class);
+    }
+    
     changePieChart(index) {
         index = +index;
         if (this.current_year === index) {
-            this.$chart_pie.hide();
+            this.hidePieChart();
         } else {
             this.current_year = index;
             this.buildPieData();
@@ -170,7 +178,26 @@ class ODStatistics {
     }
     
     buildPieData() {
+        let key = 'y' + this.years[this.current_year],
+            is_ok,
+            reg = new RegExp('республик', 'i');
         
+        this.chart_pie_data = [];
+        for (let i = 0; i < this._data.length; i++) {
+            if (this._data.length > 1) {
+                is_ok  = (!reg.test(this._data[i].nameRu) && this._data[i].hasOwnProperty(key));
+            } else {
+                is_ok = this._data[i].hasOwnProperty(key);
+            }
+            if (is_ok) {
+                this.chart_pie_data.push({
+                    value: this._data[i][key],
+                    color: this._data[i].color,
+                    highlight: this._data[i].color,
+                    label: this._data[i].nameRu
+                });
+            }
+        }
     }
     
     renderPieChart() {
@@ -178,20 +205,22 @@ class ODStatistics {
             this.chart_pie.destroy();
         }
         Chart.defaults.global.scaleBeginAtZero = true;
-        Chart.defaults.global.tooltipTemplate = this.tooltip__tpl;
-        Chart.defaults.global.multiTooltipTemplate = this.tooltip__tpl;
+        Chart.defaults.global.tooltipTemplate = this.tooltip_pie__tpl;
+        Chart.defaults.global.animation = false;
         this.chart_pie = new Chart(this.$chart_pie.getContext('2d')).Pie(this.chart_pie_data);
     }
     
     processYearClick(el) {
         if (el.classList.contains(this.active_element_class)) {
             el.classList.remove(this.active_element_class);
+            this.hidePieChart();
         } else {
             let active = this.$years_block.querySelector('.' + this.active_element_class);
             if (active) {
                 active.classList.remove(this.active_element_class)
             }
             el.classList.add(this.active_element_class);
+            this.showPieChart();
         }
         this.changePieChart(el.getAttribute('data-index'));
     }
@@ -231,6 +260,7 @@ class ODStatistics {
     
     selectChartStat(index) {
         if (this.api_data[index]) {
+            this.hidePieChart();
             this.current_stat_index = index;
             this.updateChartData(this.api_data[index].url);
             window.location.hash = this.anchor + index;
@@ -351,8 +381,8 @@ class ODStatistics {
         }
         if (this.chart_line_data.datasets.length) {
             Chart.defaults.global.scaleBeginAtZero = true;
-            Chart.defaults.global.tooltipTemplate = this.tooltip__tpl;
-            Chart.defaults.global.multiTooltipTemplate = this.tooltip__tpl;
+            Chart.defaults.global.tooltipTemplate = this.tooltip_line__tpl;
+            Chart.defaults.global.multiTooltipTemplate = this.tooltip_line__tpl;
             this.chart_line = new Chart(this.$chart_line.getContext('2d')).Line(
                 this.chart_line_data,
                 {
