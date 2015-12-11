@@ -170,9 +170,11 @@ class ODStatistics {
         index = +index;
         if (this.current_year === index) {
             this.hidePieChart();
+            this.current_year = -1;
         } else {
             this.current_year = index;
             this.buildPieData();
+            this.showPieChart();
             this.renderPieChart();
         }
     }
@@ -213,14 +215,12 @@ class ODStatistics {
     processYearClick(el) {
         if (el.classList.contains(this.active_element_class)) {
             el.classList.remove(this.active_element_class);
-            this.hidePieChart();
         } else {
             let active = this.$years_block.querySelector('.' + this.active_element_class);
             if (active) {
                 active.classList.remove(this.active_element_class)
             }
             el.classList.add(this.active_element_class);
-            this.showPieChart();
         }
         this.changePieChart(el.getAttribute('data-index'));
     }
